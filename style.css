@@ -1,0 +1,50 @@
+/* Body and Background Gradient */
+body {
+    background: linear-gradient(to right, #ff7e5f, #feb47b); /* Gradient background */
+    font-family: Arial, sans-serif;
+    text-align: center;
+    padding: 50px;
+}
+
+/* Heading Styling */
+h1 {
+    color: #4CAF50; /* Green color */
+    font-size: 3em; /* Larger font size */
+}
+
+/* Paragraph Styling */
+p {
+    color: #333; /* Dark text color */
+    font-size: 1.5em; /* Slightly larger text */
+}
+
+/* Button Styling */
+button {
+    background-color: #008CBA; /* Blue color */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: transform 0.3s ease; /* Smooth transition */
+}
+
+/* Button Hover Effect */
+button:hover {
+    transform: scale(1.1); /* Grow the button when hovered */
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 600px) {
+    body {
+        padding: 20px;
+    }
+
+    h1 {
+        font-size: 24px; /* Smaller font size for mobile */
+    }
+
+    button {
+        padding: 8px 16px;
+    }
+}
