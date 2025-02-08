@@ -1,32 +1,49 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Animated Website</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <h1 class="fade-in">Hello Youssef!</h1>
-    <p class="fade-in">I miss you</p>
-    <button class="slide-in hover-button" onclick="sendMessage()">Text Me</button>
-    <p class="bounce">
-        <span class="colorful-text part1">What are you waiting for?</span> 
-        <span class="colorful-text part2">Click the button</span> 
-        <span class="colorful-text part3">and text me</span>
-    </p>
+<style>
+    #crazyButton {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        padding: 15px 30px;
+        font-size: 20px;
+        background-color: red;
+        color: white;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+    }
+</style>
 
-    <script>
-        function sendMessage() {
-            const phoneNumber = "212707353830";  // Your WhatsApp number
-            const message = "Hello Youssef! I miss you";  // Your pre-filled message
+<button id="crazyButton">Tap Me</button>
 
-            // WhatsApp link to send a message
-            const whatsappLink = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+<script>
+    let button = document.getElementById("crazyButton");
+    let size = 20;
+    let audio = new Audio("https://www.myinstants.com/media/sounds/vine-boom.mp3");
+    let phrases = [
+        "You can't catch me, honey! 😂",
+        "Too slow, babe! 😜",
+        "Try harder, cutie! 😆",
+        "Not today, sweetheart! 💋",
+        "Catch me if you can, love! 😘"
+    ];
 
-            // Open the link in a new tab or window
-            window.open(whatsappLink, "_blank");
-        }
-    </script>
-</body>
-</html>
+    function moveButton() {
+        let x = Math.random() * (window.innerWidth - 100);
+        let y = Math.random() * (window.innerHeight - 100);
+        button.style.left = x + "px";
+        button.style.top = y + "px";
+        
+        let randomText = phrases[Math.floor(Math.random() * phrases.length)];
+        button.innerText = randomText;
+        
+        size -= 2;
+        button.style.fontSize = size + "px";
+        
+        audio.play();
+    }
+
+    // Works for both touch (mobile) & hover (desktop)
+    button.addEventListener("mouseover", moveButton);
+    button.addEventListener("touchstart", moveButton);
+</script>
