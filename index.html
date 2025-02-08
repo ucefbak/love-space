@@ -1,55 +1,293 @@
-<style>
-    #crazyButton {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        padding: 15px 30px;
-        font-size: 20px;
-        background-color: red;
-        color: white;
-        border: none;
-        cursor: pointer;
-        transition: all 0.2s ease-in-out;
-    }
-</style>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Quiz Button</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            transition: background-color 0.3s ease;
+        }
 
-<button id="crazyButton">Tap Me</button>
+        #quizButton {
+            padding: 15px 30px;
+            font-size: 18px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin: 20px;
+            border-radius: 5px;
+            transition: transform 0.3s ease;
+        }
+
+        #quizButton:hover {
+            transform: scale(1.1); /* Makes the button grow slightly when hovered */
+        }
+
+        .question-container {
+            margin: 20px 0;
+            font-size: 24px;
+            font-weight: bold;
+            animation: typing 2s steps(30) 1 normal both;
+        }
+
+        @keyframes typing {
+            0% { width: 0; }
+            100% { width: 100%; }
+        }
+
+        .answer-button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #008CBA;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            margin: 5px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .answer-button:hover {
+            background-color: #005f6b;
+            transform: scale(1.1); /* Slight grow effect on hover */
+        }
+
+        #result {
+            font-size: 20px;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+
+        .second-chance-container {
+            margin-top: 20px;
+        }
+
+        #secondChanceContainer {
+            display: none;
+            text-align: center;
+        }
+
+        .confetti {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+            animation: confetti 2s infinite;
+        }
+
+        @keyframes confetti {
+            0% { transform: translateY(-100vh); }
+            100% { transform: translateY(100vh); }
+        }
+
+    </style>
+</head>
+<body>
+
+<button id="quizButton">Start Quiz</button>
+
+<div id="quizContainer" style="display: none;">
+    <div id="questionContainer" class="question-container"></div>
+    <div id="answersContainer"></div>
+    <div id="result"></div>
+    <div id="secondChanceContainer" class="second-chance-container">
+        <button id="retryButton" class="answer-button">Second Chance</button>
+        <button id="quitButton" class="answer-button">Quit Quiz</button>
+    </div>
+</div>
 
 <script>
-    let button = document.getElementById("crazyButton");
-    let size = 20;
-    let audio = new Audio("https://www.myinstants.com/media/sounds/vine-boom.mp3");
-    let phrases = [
-        "You can't catch me, honey! 😂",
-        "Too slow, babe! 😜",
-        "Try harder, cutie! 😆",
-        "Not today, sweetheart! 💋",
-        "Catch me if you can, love! 😘",
-        "Are you even trying? 😂"
-    ];
+    let currentQuestionIndex = 0;
+    let quizOver = false;
 
-    function moveButton() {
-        let x = Math.random() * (window.innerWidth - 100);
-        let y = Math.random() * (window.innerHeight - 100);
-        button.style.left = x + "px";
-        button.style.top = y + "px";
+    const questions = [
+    {
+        question: "What is the capital of Canada?",
+        options: ["Ottawa", "Toronto", "Vancouver", "Montreal"],
+        correctAnswer: "Ottawa"
+    },
+    {
+        question: "In which year did World War II end?",
+        options: ["1941", "1945", "1939", "1950"],
+        correctAnswer: "1945"
+    },
+    {
+        question: "What is 25 + 75?",
+        options: ["100", "125", "150", "110"],
+        correctAnswer: "100"
+    },
+    {
+        question: "Which country is known as the Land of the Rising Sun?",
+        options: ["China", "Japan", "South Korea", "Thailand"],
+        correctAnswer: "Japan"
+    },
+    {
+        question: "Who won the 2018 FIFA World Cup?",
+        options: ["France", "Brazil", "Germany", "Argentina"],
+        correctAnswer: "France"
+    },
+    {
+        question: "What is the capital of Brazil?",
+        options: ["Rio de Janeiro", "Brasilia", "Sao Paulo", "Salvador"],
+        correctAnswer: "Brasilia"
+    },
+    {
+        question: "Who invented the telephone?",
+        options: ["Alexander Graham Bell", "Thomas Edison", "Nikola Tesla", "Albert Einstein"],
+        correctAnswer: "Alexander Graham Bell"
+    },
+    {
+        question: "What is the longest river in the world?",
+        options: ["Amazon River", "Nile River", "Yangtze River", "Mississippi River"],
+        correctAnswer: "Amazon River"
+    },
+    {
+        question: "Which city is known as the 'Eternal City'?",
+        options: ["Athens", "Rome", "Paris", "Cairo"],
+        correctAnswer: "Rome"
+    },
+    {
+        question: "In which country can you find the Great Barrier Reef?",
+        options: ["Australia", "USA", "Mexico", "South Africa"],
+        correctAnswer: "Australia"
+    },
+    {
+        question: "What is the capital of Spain?",
+        options: ["Madrid", "Barcelona", "Sevilla", "Valencia"],
+        correctAnswer: "Madrid"
+    },
+    {
+        question: "Which is the smallest country in the world?",
+        options: ["Monaco", "Vatican City", "San Marino", "Liechtenstein"],
+        correctAnswer: "Vatican City"
+    },
+    {
+        question: "What does the term 'Renaissance' refer to?",
+        options: ["A period of cultural rebirth", "A type of art", "A famous French Revolution", "A scientific discovery"],
+        correctAnswer: "A period of cultural rebirth"
+    },
+    {
+        question: "What is the capital of Egypt?",
+        options: ["Cairo", "Alexandria", "Giza", "Luxor"],
+        correctAnswer: "Cairo"
+    },
+    {
+        question: "Who is known as the father of modern physics?",
+        options: ["Albert Einstein", "Isaac Newton", "Nikola Tesla", "Galileo Galilei"],
+        correctAnswer: "Albert Einstein"
+    }
+];
+
+
+    function loadQuestion() {
+        // Change background color randomly for excitement
+        document.body.style.backgroundColor = getRandomColor();
+
+        const question = questions[currentQuestionIndex];
+        const questionContainer = document.getElementById("questionContainer");
+
+        // Reset typing effect
+        questionContainer.style.animation = "none";
+        questionContainer.offsetHeight; // Trigger reflow
+        questionContainer.style.animation = "typing 2s steps(30) 1 normal both";
         
-        let randomText = phrases[Math.floor(Math.random() * phrases.length)];
-        button.innerText = randomText;
-        
-        size -= 2;
-        button.style.fontSize = size + "px";
-        
-        audio.play();
+        document.getElementById("questionContainer").innerText = question.question;
+
+        const answersContainer = document.getElementById("answersContainer");
+        answersContainer.innerHTML = ''; // Clear previous answers
+
+        question.options.forEach(option => {
+            const button = document.createElement("button");
+            button.textContent = option;
+            button.classList.add("answer-button");
+            button.onclick = function () { checkAnswer(option); };
+            answersContainer.appendChild(button);
+        });
+
+        document.getElementById("secondChanceContainer").style.display = "none"; // Hide second chance options initially
     }
 
-    // Mobile Fix: Moves before touch
-    button.addEventListener("touchstart", function(event) {
-        event.preventDefault(); // Stops accidental clicks
-        moveButton();
+    function checkAnswer(answer) {
+        const correctAnswer = questions[currentQuestionIndex].correctAnswer;
+        const resultContainer = document.getElementById("result");
+
+        // Sound files for correct and wrong answers
+        const correctSound = new Audio('https://www.myinstants.com/media/sounds/correct.mp3'); // Replace with your "correct" sound
+        const wrongSound = new Audio('https://www.myinstants.com/media/sounds/wrong.mp3'); // Replace with your "wrong" sound
+
+        if (answer === correctAnswer) {
+            resultContainer.textContent = "Correct! 🎉";
+            resultContainer.style.color = "#4CAF50";
+            currentQuestionIndex++;
+
+            // Add confetti when answered correctly
+            createConfetti();
+
+            correctSound.play(); // Play "correct" sound
+
+            if (currentQuestionIndex < questions.length) {
+                setTimeout(loadQuestion, 2000); // Wait 2 seconds before showing next question
+            } else {
+                setTimeout(showQuizEnd, 2000); // Show the end message when all questions are answered
+            }
+        } else {
+            resultContainer.textContent = `Wrong! The correct answer was: ${correctAnswer}.`;
+            resultContainer.style.color = "#F44336";
+            wrongSound.play(); // Play "wrong" sound
+            showSecondChance();
+        }
+    }
+
+    function showSecondChance() {
+        document.getElementById("secondChanceContainer").style.display = "block"; // Show second chance options
+    }
+
+    function showQuizEnd() {
+        document.getElementById("quizContainer").innerHTML = "<h2>Quiz Over! Well done! 🎉</h2>";
+    }
+
+    function quitQuiz() {
+        document.getElementById("quizContainer").innerHTML = "<h2>You're done? That's all you've got? 😜</h2><p>Better luck next time!</p>";
+    }
+
+    function createConfetti() {
+        const confetti = document.createElement('div');
+        confetti.classList.add('confetti');
+        document.body.appendChild(confetti);
+
+        setTimeout(() => {
+            document.body.removeChild(confetti);
+        }, 2000); // Remove confetti after 2 seconds
+    }
+
+    function getRandomColor() {
+        const letters = '0123456789ABCDEF';
+        let color = '#';
+        for (let i = 0; i < 6; i++) {
+            color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+    }
+
+    document.getElementById("retryButton").addEventListener("click", function() {
+        loadQuestion(); // Retry the same question
     });
 
-    // Works on both desktop & mobile
-    button.addEventListener("mouseover", moveButton);
+    document.getElementById("quitButton").addEventListener("click", function() {
+        quitQuiz(); // Quit the quiz
+    });
+
+    document.getElementById("quizButton").addEventListener("click", function() {
+        document.getElementById("quizButton").style.display = "none"; // Hide the start button
+        document.getElementById("quizContainer").style.display = "block"; // Show the quiz
+        loadQuestion(); // Load the first question
+    });
 </script>
+
+</body>
+</html>
