@@ -25,7 +25,8 @@
         "Too slow, babe! 😜",
         "Try harder, cutie! 😆",
         "Not today, sweetheart! 💋",
-        "Catch me if you can, love! 😘"
+        "Catch me if you can, love! 😘",
+        "Are you even trying? 😂"
     ];
 
     function moveButton() {
@@ -43,7 +44,12 @@
         audio.play();
     }
 
-    // Works for both touch (mobile) & hover (desktop)
+    // Mobile Fix: Moves before touch
+    button.addEventListener("touchstart", function(event) {
+        event.preventDefault(); // Stops accidental clicks
+        moveButton();
+    });
+
+    // Works on both desktop & mobile
     button.addEventListener("mouseover", moveButton);
-    button.addEventListener("touchstart", moveButton);
 </script>
